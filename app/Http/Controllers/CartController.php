@@ -11,15 +11,22 @@ use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-public function index()
-{
-    $cartItems = Auth::user()->cart()->with('product')->get();
-    $total = Auth::user()->getCartTotal(); 
-    $bonusPoints = Auth::user()->getBonusPoints();
-    $maxBonusDiscount = Auth::user()->loyalty ? Auth::user()->loyalty->getMaxDiscount() : 0;
+    /**
+     * Показать корзину
+     */
+    public function index()
+    {
+        $cartItems = Auth::user()->cart()->with('product')->get();
+        $total = Auth::user()->getCartTotal();
+        $bonusPoints = Auth::user()->getBonusPoints();
+        $maxBonusDiscount = Auth::user()->loyalty ? Auth::user()->loyalty->getMaxDiscount() : 0;
 
-    return view('cart.index', compact('cartItems', 'total', 'bonusPoints', 'maxBonusDiscount'));
-}
+        return view('cart.index', compact('cartItems', 'total', 'bonusPoints', 'maxBonusDiscount'));
+    }
+
+    /**
+     * Добавить товар в корзину
+     */
     public function add(Request $request)
     {
         $request->validate([
@@ -29,11 +36,12 @@ public function index()
 
         $product = Product::findOrFail($request->product_id);
 
-
+        // Проверка наличия
         if (!$product->hasEnoughStock($request->quantity)) {
             return back()->with('error', 'Недостаточно товара на складе');
         }
 
+        // Проверка возраста
         if (!Auth::user()->isAdult()) {
             return back()->with('error', 'Только для совершеннолетних');
         }
@@ -57,7 +65,9 @@ public function index()
         return redirect()->route('cart.index')->with('success', $message);
     }
 
-
+    /**
+     * Обновить количество товара в корзине
+     */
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -76,6 +86,9 @@ public function index()
         return back()->with('success', 'Количество обновлено');
     }
 
+    /**
+     * Удалить товар из корзины
+     */
     public function remove($id)
     {
         $cartItem = Cart::where('user_id', Auth::id())->findOrFail($id);
@@ -84,13 +97,18 @@ public function index()
         return back()->with('success', 'Товар удален из корзины');
     }
 
+    /**
+     * Очистить корзину
+     */
     public function clear()
     {
         Auth::user()->clearCart();
         return back()->with('success', 'Корзина очищена');
     }
 
-
+    /**
+     * Применить бонусы
+     */
     public function applyBonus(Request $request)
     {
         $request->validate([
@@ -116,6 +134,9 @@ public function index()
         return back()->with('success', 'Бонусы применены');
     }
 
+    /**
+     * Убрать бонусы
+     */
     public function removeBonus()
     {
         session()->forget(['bonus_discount', 'bonus_used']);

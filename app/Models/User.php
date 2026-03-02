@@ -71,12 +71,17 @@ class User extends Authenticatable
 
     // ============ МЕТОДЫ ============
 
+    /**
+     * Получить полное имя пользователя
+     */
     public function getFullName(): string
     {
         return trim($this->surname . ' ' . $this->name . ' ' . $this->patronymic);
     }
 
-
+    /**
+     * Получить инициалы
+     */
     public function getInitials(): string
     {
         $initials = $this->surname . ' ';
@@ -87,25 +92,33 @@ class User extends Authenticatable
         return $initials;
     }
 
-
+    /**
+     * Проверить, совершеннолетний ли пользователь (18+)
+     */
     public function isAdult(): bool
     {
         return $this->birth_date->age >= 18;
     }
 
-
+    /**
+     * Получить количество бонусов
+     */
     public function getBonusPoints(): int
     {
         return $this->loyalty ? $this->loyalty->points : 0;
     }
 
+    /**
+     * Получить уровень лояльности
+     */
     public function getLoyaltyLevel(): string
     {
         return $this->loyalty ? $this->loyalty->level : 'бронза';
     }
 
-
-
+    /**
+     * Получить сумму всех заказов
+     */
     public function getTotalSpent(): float
     {
         return $this->orders()
@@ -113,18 +126,25 @@ class User extends Authenticatable
             ->sum('final_amount');
     }
 
+    /**
+     * Получить количество заказов
+     */
     public function getOrdersCount(): int
     {
         return $this->orders()->count();
     }
 
-
+    /**
+     * Получить активную корзину с товарами
+     */
     public function getCartItems()
     {
         return $this->cart()->with('product')->get();
     }
 
-
+    /**
+     * Получить сумму корзины
+     */
     public function getCartTotal(): float
     {
         return $this->cart()
@@ -132,13 +152,17 @@ class User extends Authenticatable
             ->sum('products.price * cart.quantity');
     }
 
-
+    /**
+     * Получить избранные товары
+     */
     public function getFavorites()
     {
         return $this->favorites()->with('product')->get();
     }
 
-
+    /**
+     * Проверить, есть ли товар в избранном
+     */
     public function hasInFavorites(int $productId): bool
     {
         return $this->favorites()
@@ -146,6 +170,9 @@ class User extends Authenticatable
             ->exists();
     }
 
+    /**
+     * Проверить, есть ли товар в корзине
+     */
     public function hasInCart(int $productId): bool
     {
         return $this->cart()
@@ -153,7 +180,9 @@ class User extends Authenticatable
             ->exists();
     }
 
-
+    /**
+     * Очистить корзину
+     */
     public function clearCart(): void
     {
         $this->cart()->delete();

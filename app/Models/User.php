@@ -105,6 +105,7 @@ class User extends Authenticatable
     }
 
 
+
     public function getTotalSpent(): float
     {
         return $this->orders()
@@ -137,7 +138,7 @@ class User extends Authenticatable
         return $this->favorites()->with('product')->get();
     }
 
-  
+
     public function hasInFavorites(int $productId): bool
     {
         return $this->favorites()
@@ -152,7 +153,7 @@ class User extends Authenticatable
             ->exists();
     }
 
- 
+
     public function clearCart(): void
     {
         $this->cart()->delete();

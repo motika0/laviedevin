@@ -25,4 +25,20 @@ class AgeVerification extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function isVerified(): bool
+{
+    return !is_null($this->verified_at);
+}
+
+public function verifyNow(): void
+{
+    $this->verified_at = now();
+    $this->save();
+}
+
+public function getVerifiedAtFormatted(): string
+{
+    return $this->verified_at ? $this->verified_at->format('d.m.Y H:i') : 'Не подтвержден';
+}
 }

@@ -29,4 +29,19 @@ class LoyaltyHistory extends Model
     {
         return $this->belongsTo(Order::class);
     }
+
+    public function getSign(): string
+{
+    return $this->points > 0 ? '+' : '';
+}
+
+public function isAccrual(): bool
+{
+    return $this->points > 0;
+}
+
+public function isSpending(): bool
+{
+    return $this->points < 0;
+}
 }

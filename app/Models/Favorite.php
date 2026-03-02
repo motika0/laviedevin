@@ -24,4 +24,18 @@ class Favorite extends Model
     {
         return $this->belongsTo(Product::class);
     }
+    public static function addToFavorites(int $userId, int $productId): self
+{
+    return self::firstOrCreate([
+        'user_id' => $userId,
+        'product_id' => $productId,
+    ]);
+}
+
+public static function removeFromFavorites(int $userId, int $productId): bool
+{
+    return self::where('user_id', $userId)
+        ->where('product_id', $productId)
+        ->delete() > 0;
+}
 }

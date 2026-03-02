@@ -31,4 +31,31 @@ class Review extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function approve(): void
+{
+    $this->is_approved = true;
+    $this->save();
+}
+
+public function reject(): void
+{
+    $this->is_approved = false;
+    $this->save();
+}
+
+public function getAuthorName(): string
+{
+    return $this->user ? $this->user->getInitials() : 'Пользователь удален';
+}
+
+public function isPositive(): bool
+{
+    return $this->rating >= 4;
+}
+
+public function isNegative(): bool
+{
+    return $this->rating <= 2;
+}
 }

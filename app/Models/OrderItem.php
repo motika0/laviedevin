@@ -30,4 +30,14 @@ class OrderItem extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function getTotal(): float
+{
+    return $this->price * $this->quantity;
+}
+
+public function getProductName(): string
+{
+    return $this->product ? $this->product->name : 'Товар удален';
+}
 }

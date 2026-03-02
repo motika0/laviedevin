@@ -44,4 +44,59 @@ class Order extends Model
     {
         return $this->hasMany(LoyaltyHistory::class);
     }
+
+    public function getTotalItems(): int
+{
+    return $this->items()->sum('quantity');
+}
+
+public function isCancellable(): bool
+{
+    return in_array($this->status, ['новый', 'в обработке']);
+}
+
+public function cancel(): bool
+{
+    if (!$this->isCancellable()) {
+        return false;
+    }
+    
+    $this->status = 'отменен';
+    return $this->save();
+}
+
+public function markAsPaid(): void
+{
+    $this->payment_status = 'оплачен';
+    $this->save();
+}
+
+public function updateStatus(string $status): bool
+{
+    $allowed = ['новый', 'в обработке', 'выполнен', 'отменен'];
+    
+    if (!in_array($status, $allowed)) {
+        return false;
+    }
+    
+    $this->status = $status;
+    return $this->save();
+}
+
+public function getDiscountAmount(): float
+{
+    return $this->discount_amount ?? 0;
+}
+
+public static function generateOrderNumber(): string
+{
+    $date = now()->format('Ymd');
+    $lastOrder = self::whereDate('created_at', today())
+        ->orderBy('id', 'desc')
+        ->first();
+    
+    $number = $lastOrder ? intval(substr($lastOrder->order_number, -4)) + 1 : 1;
+    
+    return 'ORD-' . $date . '-' . str_pad($number, 4, '0', STR_PAD_LEFT);
+}
 }

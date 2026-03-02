@@ -14,7 +14,8 @@ use App\Http\Controllers\Auth\LogoutController;
 
 // Главная
 Route::get('/', [ProductController::class, 'new'])->name('home');
-
+// Или если хотите использовать отдельный контроллер:
+// Route::view('/', 'home')->name('home');
 // Товары
 Route::prefix('products')->name('products.')->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('index');

@@ -85,15 +85,14 @@ class ProductController extends Controller
     }
 
 
-    public function new()
-    {
-        $products = Product::where('is_active', true)
-            ->orderBy('created_at', 'desc')
-            ->limit(20)
-            ->get();
+public function new()
+{
+    $products = Product::where('is_active', true)
+        ->orderBy('created_at', 'desc')
+        ->paginate(12);
 
-        return view('products.new', compact('products'));
-    }
+    return view('products.index', compact('products'));
+}
 
 
     public function search(Request $request)

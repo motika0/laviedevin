@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\User;
 use App\Models\Product;
 use App\Models\Loyalty;
 use Illuminate\Http\Request;
@@ -10,16 +11,15 @@ use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-    public function index()
-    {
-        $cartItems = Auth::user()->cart()->with('product')->get();
-        $total = Auth::user()->getCartTotal();
-        $bonusPoints = Auth::user()->getBonusPoints();
-        $maxBonusDiscount = Auth::user()->loyalty ? Auth::user()->loyalty->getMaxDiscount() : 0;
+public function index()
+{
+    $cartItems = Auth::user()->cart()->with('product')->get();
+    $total = Auth::user()->getCartTotal(); 
+    $bonusPoints = Auth::user()->getBonusPoints();
+    $maxBonusDiscount = Auth::user()->loyalty ? Auth::user()->loyalty->getMaxDiscount() : 0;
 
-        return view('cart.index', compact('cartItems', 'total', 'bonusPoints', 'maxBonusDiscount'));
-    }
-
+    return view('cart.index', compact('cartItems', 'total', 'bonusPoints', 'maxBonusDiscount'));
+}
     public function add(Request $request)
     {
         $request->validate([

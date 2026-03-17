@@ -76,6 +76,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/{id}', [ReviewController::class, 'update'])->name('update');
         Route::delete('/{id}', [ReviewController::class, 'destroy'])->name('destroy');
     });
+
 });
 
 // ==================== ДОПОЛНИТЕЛЬНО ====================

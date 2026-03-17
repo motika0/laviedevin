@@ -10,7 +10,7 @@ class CategorySeeder extends Seeder
 {
     public function run(): void
     {
-        // Отключаем проверку внешних ключей
+
         DB::statement('SET FOREIGN_KEY_CHECKS=0');
         Category::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1');

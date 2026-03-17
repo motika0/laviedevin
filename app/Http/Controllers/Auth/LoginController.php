@@ -8,17 +8,13 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    /**
-     * Показать форму входа
-     */
+
     public function create()
     {
         return view('auth.login');
     }
 
-    /**
-     * Обработать вход
-     */
+
     public function store(Request $request)
     {
         $request->validate([
@@ -32,7 +28,6 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
             
-            // Проверка возраста
             if (!Auth::user()->isAdult()) {
                 Auth::logout();
                 return back()->withErrors([

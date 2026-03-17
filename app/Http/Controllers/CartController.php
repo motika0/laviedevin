@@ -11,9 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-    /**
-     * Показать корзину
-     */
     public function index()
     {
         $cartItems = Auth::user()->cart()->with('product')->get();
@@ -24,9 +21,6 @@ class CartController extends Controller
         return view('cart.index', compact('cartItems', 'total', 'bonusPoints', 'maxBonusDiscount'));
     }
 
-    /**
-     * Добавить товар в корзину
-     */
     public function add(Request $request)
     {
         $request->validate([
@@ -36,12 +30,10 @@ class CartController extends Controller
 
         $product = Product::findOrFail($request->product_id);
 
-        // Проверка наличия
         if (!$product->hasEnoughStock($request->quantity)) {
             return back()->with('error', 'Недостаточно товара на складе');
         }
 
-        // Проверка возраста
         if (!Auth::user()->isAdult()) {
             return back()->with('error', 'Только для совершеннолетних');
         }
@@ -65,9 +57,7 @@ class CartController extends Controller
         return redirect()->route('cart.index')->with('success', $message);
     }
 
-    /**
-     * Обновить количество товара в корзине
-     */
+
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -86,9 +76,7 @@ class CartController extends Controller
         return back()->with('success', 'Количество обновлено');
     }
 
-    /**
-     * Удалить товар из корзины
-     */
+
     public function remove($id)
     {
         $cartItem = Cart::where('user_id', Auth::id())->findOrFail($id);
@@ -97,18 +85,14 @@ class CartController extends Controller
         return back()->with('success', 'Товар удален из корзины');
     }
 
-    /**
-     * Очистить корзину
-     */
+
     public function clear()
     {
         Auth::user()->clearCart();
         return back()->with('success', 'Корзина очищена');
     }
 
-    /**
-     * Применить бонусы
-     */
+
     public function applyBonus(Request $request)
     {
         $request->validate([
@@ -134,9 +118,7 @@ class CartController extends Controller
         return back()->with('success', 'Бонусы применены');
     }
 
-    /**
-     * Убрать бонусы
-     */
+
     public function removeBonus()
     {
         session()->forget(['bonus_discount', 'bonus_used']);

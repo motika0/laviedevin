@@ -18,8 +18,8 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Шато Марго 2015',
                 'description' => 'Изысканное красное вино из региона Бордо. Обладает глубоким рубиновым цветом и сложным ароматом с нотами черных ягод, трюфелей и дуба.',
-                'price' => 5990.00,
-                'old_price' => 6990.00,
+                'price' => 599.00,
+                'old_price' => 699.00,
                 'volume' => 0.75,
                 'alcohol' => 13.5,
                 'country' => 'Франция',
@@ -31,7 +31,7 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Кьянти Классико',
                 'description' => 'Итальянское красное вино из Тосканы. Свежее, с нотами вишни и фиалки.',
-                'price' => 1890.00,
+                'price' => 189.00,
                 'old_price' => null,
                 'volume' => 0.75,
                 'alcohol' => 12.5,
@@ -45,8 +45,8 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Шардоне "Золотая балка"',
                 'description' => 'Белое сухое вино из Крыма. Легкое, с нотами яблок и цитрусовых.',
-                'price' => 890.00,
-                'old_price' => 990.00,
+                'price' => 89.00,
+                'old_price' => 99.00,
                 'volume' => 0.75,
                 'alcohol' => 12.0,
                 'country' => 'Россия',
@@ -58,7 +58,7 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Рислинг "Тропикана"',
                 'description' => 'Немецкий рислинг с тропическими нотами и приятной кислинкой.',
-                'price' => 1450.00,
+                'price' => 145.00,
                 'old_price' => null,
                 'volume' => 0.75,
                 'alcohol' => 11.5,
@@ -71,8 +71,8 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Моет э Шандон Империал',
                 'description' => 'Легендарное шампанское с нотами груши, цитрусовых и бриоши.',
-                'price' => 6990.00,
-                'old_price' => 7990.00,
+                'price' => 699.00,
+                'old_price' => 799.00,
                 'volume' => 0.75,
                 'alcohol' => 12.0,
                 'country' => 'Франция',
@@ -84,8 +84,8 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Джек Дэниэлс',
                 'description' => 'Американский виски с характерным вкусом ванили и дуба.',
-                'price' => 2890.00,
-                'old_price' => 2990.00,
+                'price' => 289.00,
+                'old_price' => 299.00,
                 'volume' => 0.7,
                 'alcohol' => 40.0,
                 'country' => 'США',
@@ -97,7 +97,7 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Джонни Уокер Блэк Лейбл',
                 'description' => 'Купажированный шотландский виски с дымными нотами.',
-                'price' => 3590.00,
+                'price' => 359.00,
                 'old_price' => null,
                 'volume' => 0.7,
                 'alcohol' => 40.0,

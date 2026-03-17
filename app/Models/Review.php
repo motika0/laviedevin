@@ -21,7 +21,6 @@ class Review extends Model
         'is_approved' => 'boolean',
     ];
 
-    // Связи
     public function user()
     {
         return $this->belongsTo(User::class);

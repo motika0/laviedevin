@@ -31,17 +31,17 @@
             <div class="mb-6">
                 @if($product->hasDiscount())
                 <span class="text-gray-500 line-through text-xl">
-                    {{ number_format($product->price, 0, '', ' ') }} ₽
+                    {{ number_format($product->price, 0, '', ' ') }} BYN
                 </span>
                 <span class="text-4xl font-bold text-white ml-4">
-                    {{ number_format($product->getCurrentPrice(), 0, '', ' ') }} ₽
+                    {{ number_format($product->getCurrentPrice(), 0, '', ' ') }} BYN
                 </span>
                 <span class="ml-4 text-[#b91c1c] text-sm">
                     -{{ $product->getDiscountPercent() }}%
                 </span>
                 @else
                 <span class="text-4xl font-bold text-white">
-                    {{ number_format($product->price, 0, '', ' ') }} ₽
+                    {{ number_format($product->price, 0, '', ' ') }} BYN
                 </span>
                 @endif
             </div>
@@ -155,7 +155,7 @@
 
                     <div class="flex items-center justify-between">
                         <span class="text-[#b91c1c] font-bold">
-                            {{ number_format($related->getCurrentPrice(), 0, '', ' ') }} ₽
+                            {{ number_format($related->getCurrentPrice(), 0, '', ' ') }} BYN
                         </span>
 
                         <div class="flex items-center gap-2">

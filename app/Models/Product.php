@@ -71,7 +71,11 @@ public function getDiscountPercent(): ?int
         return null;
     }
     
-    return round((($this->price - $this->old_price) / $this->price) * 100);
+    if ($this->old_price <= $this->price) {
+        return null;
+    }
+    
+    return round((($this->old_price - $this->price) / $this->old_price) * 100);
 }
 
 public function getAverageRating(): float
@@ -135,8 +139,9 @@ public function getUrl(): string
 
 public function getImageUrl(): string
 {
-    return $this->image 
-        ? asset('storage/' . $this->image)
-        : asset('images/no-image.jpg');
+    if ($this->image) {
+        return asset($this->image); 
+    }
+    return asset('images/no-image.jpg');
 }
 }

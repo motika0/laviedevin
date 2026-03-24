@@ -9,6 +9,20 @@ use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
 {
+    public function create()
+    {
+        $purchasedProducts = Auth::user()->orders()
+            ->where('status', 'выполнен')
+            ->with('items.product')
+            ->get()
+            ->pluck('items')
+            ->flatten()
+            ->pluck('product')
+            ->unique('id');
+        
+        return view('partials.review-form', compact('purchasedProducts'));
+    }
+
     public function store(Request $request, $productId)
     {
         $request->validate([
@@ -18,7 +32,6 @@ class ReviewController extends Controller
 
         $product = Product::findOrFail($productId);
 
-        // Проверка, покупал ли пользователь этот товар
         $hasPurchased = Auth::user()->orders()
             ->whereHas('items', function($q) use ($productId) {
                 $q->where('product_id', $productId);
@@ -27,16 +40,21 @@ class ReviewController extends Controller
             ->exists();
 
         if (!$hasPurchased) {
-            return back()->with('error', 'Вы можете оставить отзыв только на купленные товары');
+            return response()->json([
+                'success' => false,
+                'message' => 'Вы можете оставить отзыв только на купленные товары'
+            ]);
         }
 
-        // Проверка, не оставлял ли уже отзыв
         $existingReview = Review::where('user_id', Auth::id())
             ->where('product_id', $productId)
             ->first();
 
         if ($existingReview) {
-            return back()->with('error', 'Вы уже оставили отзыв на этот товар');
+            return response()->json([
+                'success' => false,
+                'message' => 'Вы уже оставили отзыв на этот товар'
+            ]);
         }
 
         Review::create([
@@ -44,10 +62,13 @@ class ReviewController extends Controller
             'product_id' => $productId,
             'rating' => $request->rating,
             'comment' => $request->comment,
-            'is_approved' => false, // На модерацию
+            'is_approved' => false,
         ]);
 
-        return back()->with('success', 'Отзыв отправлен на модерацию');
+        return response()->json([
+            'success' => true,
+            'message' => 'Отзыв отправлен на модерацию'
+        ]);
     }
 
     public function update(Request $request, $id)
@@ -62,7 +83,7 @@ class ReviewController extends Controller
         $review->update([
             'rating' => $request->rating,
             'comment' => $request->comment,
-            'is_approved' => false, // Снова на модерацию
+            'is_approved' => false,
         ]);
 
         return back()->with('success', 'Отзыв обновлен');

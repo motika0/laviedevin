@@ -44,16 +44,15 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
-    public function reviews()
-    {
-        return $this->hasMany(Review::class);
-    }
+public function favorites()
+{
+    return $this->hasMany(Favorite::class, 'user_id');
+}
 
-    public function favorites()
-    {
-        return $this->hasMany(Favorite::class);
-    }
-
+public function reviews()
+{
+    return $this->hasMany(Review::class, 'user_id');
+}
     public function loyalty()
     {
         return $this->hasOne(Loyalty::class);
@@ -64,10 +63,10 @@ class User extends Authenticatable
         return $this->hasMany(LoyaltyHistory::class);
     }
 
-    public function ageVerification()
-    {
-        return $this->hasOne(AgeVerification::class);
-    }
+public function ageVerification()
+{
+    return $this->hasOne(AgeVerification::class, 'user_id');
+}
 
 
 

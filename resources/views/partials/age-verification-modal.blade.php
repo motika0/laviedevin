@@ -46,7 +46,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // Проверяем сессию, а не localStorage
     if (!sessionStorage.getItem('age_warning_shown')) {
         document.body.style.overflow = 'hidden';
         document.getElementById('main-content').style.opacity = '0';
@@ -75,7 +74,6 @@ function closeModal() {
             modal.style.display = 'none';
             document.body.style.overflow = 'auto';
             
-            // Сохраняем в сессию, а не в localStorage
             sessionStorage.setItem('age_warning_shown', 'true');
             
             mainContent.style.opacity = '1';

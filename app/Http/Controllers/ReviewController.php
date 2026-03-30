@@ -6,6 +6,7 @@ use App\Models\Review;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ReviewController extends Controller
 {
@@ -23,8 +24,9 @@ class ReviewController extends Controller
         return view('partials.review-form', compact('purchasedProducts'));
     }
 
-    public function store(Request $request, $productId)
-    {
+   public function store(Request $request, $productId)
+{
+    try {
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'required|string|min:10|max:1000',
@@ -33,43 +35,41 @@ class ReviewController extends Controller
         $product = Product::findOrFail($productId);
 
         $hasPurchased = Auth::user()->orders()
+            ->where('status', 'выполнен')
             ->whereHas('items', function($q) use ($productId) {
                 $q->where('product_id', $productId);
             })
-            ->where('status', 'выполнен')
             ->exists();
 
         if (!$hasPurchased) {
             return response()->json([
                 'success' => false,
                 'message' => 'Вы можете оставить отзыв только на купленные товары'
-            ]);
+            ], 403);
         }
 
-        $existingReview = Review::where('user_id', Auth::id())
-            ->where('product_id', $productId)
-            ->first();
-
-        if ($existingReview) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Вы уже оставили отзыв на этот товар'
-            ]);
-        }
-
-        Review::create([
+        $review = Review::create([
             'user_id' => Auth::id(),
             'product_id' => $productId,
-            'rating' => $request->rating,
-            'comment' => $request->comment,
-            'is_approved' => false,
+            'rating' => (int) $request->rating,
+            'comment' => trim($request->comment),
+            'is_approved' => true,
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Отзыв отправлен на модерацию'
+            'message' => 'Спасибо за отзыв!',
+            'review' => $review
         ]);
+
+    } catch (\Exception $e) {
+        Log::error('Review creation error: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Произошла ошибка при сохранении отзыва: ' . $e->getMessage()
+        ], 500);
     }
+}
 
     public function update(Request $request, $id)
     {
@@ -86,7 +86,10 @@ class ReviewController extends Controller
             'is_approved' => false,
         ]);
 
-        return back()->with('success', 'Отзыв обновлен');
+        return response()->json([
+            'success' => true,
+            'message' => 'Отзыв обновлен'
+        ]);
     }
 
     public function destroy($id)
@@ -94,6 +97,9 @@ class ReviewController extends Controller
         $review = Review::where('user_id', Auth::id())->findOrFail($id);
         $review->delete();
 
-        return back()->with('success', 'Отзыв удален');
+        return response()->json([
+            'success' => true,
+            'message' => 'Отзыв удален'
+        ]);
     }
 }

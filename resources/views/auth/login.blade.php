@@ -59,7 +59,6 @@
 
 <div class="auth-wrapper w-full max-w-4xl rounded-xl overflow-hidden grid md:grid-cols-2">
 
-    <!-- Левая часть -->
     <div class="left-side hidden md:flex flex-col justify-between p-12">
         <div>
             <a href="{{ route('home') }}" class="text-2xl font-light tracking-widest text-white">
@@ -82,7 +81,6 @@
         </div>
     </div>
 
-    <!-- Правая часть -->
     <div class="p-10 md:p-14 bg-[#181818]">
 
         <h2 class="text-2xl font-light text-white mb-2">

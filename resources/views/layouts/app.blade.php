@@ -89,22 +89,6 @@
 
         <main class="pt-24">
 
-            <!-- @if(session('success'))
-            <div class="max-w-4xl mx-auto px-6 mb-6">
-                <div class="border layout-border px-6 py-4 text-green-400 bg-green-900/10">
-                    {{ session('success') }}
-                </div>
-            </div>
-            @endif
-
-            @if(session('error'))
-            <div class="max-w-4xl mx-auto px-6 mb-6">
-                <div class="border layout-border px-6 py-4 text-red-400 bg-red-900/10">
-                    {{ session('error') }}
-                </div>
-            </div>
-            @endif -->
-
             <div class="max-w-7xl mx-auto px-6">
                 @yield('content')
             </div>

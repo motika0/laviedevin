@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class FavoriteController extends Controller
 {
-    /**
-     * Показать список избранного
-     */
     public function index()
     {
         $favorites = Auth::user()->favorites()->with('product')->get();
@@ -19,9 +16,7 @@ class FavoriteController extends Controller
         return view('favorites.index', compact('favorites'));
     }
     
-    /**
-     * Добавить/удалить из избранного (переключатель)
-     */
+
     public function toggle(Product $product)
     {
         $user = Auth::user();
@@ -31,12 +26,10 @@ class FavoriteController extends Controller
             ->first();
         
         if ($favorite) {
-            // Удаляем из избранного
             $favorite->delete();
             $message = 'Товар удален из избранного';
             $isFavorite = false;
         } else {
-            // Добавляем в избранное
             Favorite::create([
                 'user_id' => $user->id,
                 'product_id' => $product->id,
@@ -45,7 +38,6 @@ class FavoriteController extends Controller
             $isFavorite = true;
         }
         
-        // Если это AJAX запрос
         if (request()->wantsJson()) {
             return response()->json([
                 'success' => true,
@@ -55,13 +47,10 @@ class FavoriteController extends Controller
             ]);
         }
         
-        // Обычный редирект
         return back()->with('success', $message);
     }
     
-    /**
-     * Проверить, есть ли товар в избранном
-     */
+
     public function check(Product $product)
     {
         $isFavorite = Auth::user()->hasInFavorites($product->id);
@@ -71,9 +60,7 @@ class FavoriteController extends Controller
         ]);
     }
     
-    /**
-     * Получить количество избранных товаров
-     */
+
     public function count()
     {
         $count = Auth::user()->favorites()->count();
@@ -83,9 +70,6 @@ class FavoriteController extends Controller
         ]);
     }
     
-    /**
-     * Очистить всё избранное
-     */
     public function clear()
     {
         Auth::user()->favorites()->delete();

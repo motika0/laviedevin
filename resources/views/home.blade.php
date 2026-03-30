@@ -88,14 +88,14 @@
                         <div>
                             @if($product->hasDiscount() && $product->old_price > $product->price)
                                 <span class="text-gray-500 line-through text-sm">
-                                    {{ number_format($product->old_price, 0, '', ' ') }} ₽
+                                    {{ number_format($product->old_price, 0, '', ' ') }} BYN
                                 </span>
                                 <span class="text-xl font-bold text-white block">
-                                    {{ number_format($product->price, 0, '', ' ') }} ₽
+                                    {{ number_format($product->price, 0, '', ' ') }} BYN
                                 </span>
                             @else
                                 <span class="text-xl font-bold text-white">
-                                    {{ number_format($product->price, 0, '', ' ') }} ₽
+                                    {{ number_format($product->price, 0, '', ' ') }} BYN
                                 </span>
                             @endif
                         </div>
@@ -212,7 +212,7 @@
         </div>
     @endauth
     
-@auth
+    @auth
     <div id="review-form" class="bg-[#1a1a1a] border border-white/10 rounded-xl p-6 mt-6 hidden">
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-xl font-light text-white">Оставить отзыв о товаре</h3>
@@ -284,7 +284,10 @@
             }
         }
         
+        let currentRating = 0;
+        
         function setRating(rating) {
+            currentRating = rating;
             document.getElementById('rating-input').value = rating;
             
             const stars = document.querySelectorAll('#stars-container .star');
@@ -299,7 +302,6 @@
             });
         }
         
-        // При выборе товара - меняем action формы
         const productSelect = document.getElementById('product-select');
         const reviewForm = document.getElementById('review-submit-form');
         
@@ -310,7 +312,60 @@
                 reviewForm.action = '#';
             }
         });
+        
+        reviewForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const url = this.action;
+            
+            if (url === '#') {
+                alert('Пожалуйста, выберите товар');
+                return;
+            }
+            
+            if (!currentRating) {
+                alert('Пожалуйста, поставьте оценку');
+                return;
+            }
+            
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Отправка...';
+            submitButton.disabled = true;
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(data.message);
+                    this.reset();
+                    setRating(0);
+                    productSelect.value = '';
+                    reviewForm.action = '#';
+                    toggleReviewForm();
+                    location.reload();
+                } else {
+                    alert(data.message || 'Произошла ошибка');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Произошла ошибка при отправке отзыва');
+            } finally {
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            }
+        });
     </script>
-    @endauth
+    @endauth 
 </section>
 @endsection

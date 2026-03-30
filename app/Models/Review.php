@@ -19,6 +19,7 @@ class Review extends Model
 
     protected $casts = [
         'is_approved' => 'boolean',
+        'rating' => 'integer',
     ];
 
     public function user()
@@ -26,35 +27,35 @@ class Review extends Model
         return $this->belongsTo(User::class);
     }
 
-public function product()
-{
-    return $this->belongsTo(Product::class, 'product_id');
-}
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id');
+    }
 
     public function approve(): void
-{
-    $this->is_approved = true;
-    $this->save();
-}
+    {
+        $this->is_approved = true;
+        $this->save();
+    }
 
-public function reject(): void
-{
-    $this->is_approved = false;
-    $this->save();
-}
+    public function reject(): void
+    {
+        $this->is_approved = false;
+        $this->save();
+    }
 
-public function getAuthorName(): string
-{
-    return $this->user ? $this->user->getInitials() : 'Пользователь удален';
-}
+    public function getAuthorName(): string
+    {
+        return $this->user ? $this->user->getInitials() : 'Пользователь удален';
+    }
 
-public function isPositive(): bool
-{
-    return $this->rating >= 4;
-}
+    public function isPositive(): bool
+    {
+        return $this->rating >= 4;
+    }
 
-public function isNegative(): bool
-{
-    return $this->rating <= 2;
-}
+    public function isNegative(): bool
+    {
+        return $this->rating <= 2;
+    }
 }

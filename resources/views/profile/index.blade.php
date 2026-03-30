@@ -11,10 +11,8 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-        <!-- 👤 ЛЕВАЯ КОЛОНКА -->
         <div class="space-y-6">
 
-            <!-- ДАННЫЕ -->
             <div class="bg-[#1a1a1a] p-6 rounded-xl border border-white/10">
                 <h2 class="text-xl text-white mb-4">Мои данные</h2>
 
@@ -36,7 +34,6 @@
                 </p>
             </div>
 
-            <!-- 🛑 ВЕРИФИКАЦИЯ -->
             <div class="bg-[#1a1a1a] p-6 rounded-xl border border-white/10">
 
                 <h2 class="text-xl text-white mb-4">Подтверждение возраста</h2>
@@ -67,10 +64,8 @@
 
         </div>
 
-        <!-- 📦 ПРАВАЯ КОЛОНКА -->
         <div class="lg:col-span-2 space-y-8">
 
-            <!-- 🛒 ЗАКАЗЫ -->
             <div class="bg-[#1a1a1a] p-6 rounded-xl border border-white/10">
                 <h2 class="text-xl text-white mb-4">Мои заказы</h2>
 
@@ -88,7 +83,6 @@
                 @endforelse
             </div>
 
-            <!-- ❤️ ИЗБРАННОЕ -->
             <div class="bg-[#1a1a1a] p-6 rounded-xl border border-white/10">
                 <h2 class="text-xl text-white mb-4">Избранное</h2>
 
@@ -105,7 +99,6 @@
                 </div>
             </div>
 
-            <!-- ⭐ ОТЗЫВЫ -->
             <div class="bg-[#1a1a1a] p-6 rounded-xl border border-white/10">
                 <h2 class="text-xl text-white mb-4">Мои отзывы</h2>
 

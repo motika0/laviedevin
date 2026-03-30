@@ -65,6 +65,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/{id}/cancel', [OrderController::class, 'cancel'])->name('cancel');
         Route::post('/{id}/reorder', [OrderController::class, 'reorder'])->name('reorder');
         Route::post('/{id}/pay', [OrderController::class, 'pay'])->name('pay');
+        Route::post('/{id}/process', [OrderController::class, 'processOrder'])->name('process');
     });
     
     Route::prefix('reviews')->name('reviews.')->group(function () {

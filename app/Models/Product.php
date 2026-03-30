@@ -29,7 +29,6 @@ class Product extends Model
         'is_active' => 'boolean',
     ];
 
-    // Связи
     public function category()
     {
         return $this->belongsTo(Category::class);

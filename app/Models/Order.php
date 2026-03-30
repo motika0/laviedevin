@@ -29,7 +29,6 @@ class Order extends Model
         'final_amount' => 'decimal:2',
     ];
 
-    // Связи
     public function user()
     {
         return $this->belongsTo(User::class);

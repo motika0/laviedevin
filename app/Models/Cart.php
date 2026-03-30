@@ -17,7 +17,6 @@ class Cart extends Model
         'quantity',
     ];
 
-    // ============ СВЯЗИ ============
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -28,28 +27,17 @@ class Cart extends Model
         return $this->belongsTo(Product::class);
     }
 
-    // ============ МЕТОДЫ ============
-
-    /**
-     * Получить общую стоимость позиции
-     */
     public function getTotal(): float
     {
         return $this->product->getCurrentPrice() * $this->quantity;
     }
 
-    /**
-     * Увеличить количество
-     */
     public function increaseQuantity(int $amount = 1): void
     {
         $this->quantity += $amount;
         $this->save();
     }
 
-    /**
-     * Уменьшить количество
-     */
     public function decreaseQuantity(int $amount = 1): bool
     {
         if ($this->quantity <= $amount) {
@@ -61,9 +49,6 @@ class Cart extends Model
         return true;
     }
 
-    /**
-     * Проверить, доступно ли количество
-     */
     public function isQuantityAvailable(): bool
     {
         return $this->product->hasEnoughStock($this->quantity);

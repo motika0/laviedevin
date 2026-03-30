@@ -23,7 +23,6 @@ class CategoryController extends Controller
         
         $products = $category->getAllProducts();
         
-        // Пагинация для собранных товаров
         $products = new \Illuminate\Pagination\LengthAwarePaginator(
             $products->forPage(request()->get('page', 1), 12),
             $products->count(),

@@ -20,7 +20,6 @@ class AgeVerification extends Model
         'verified_at' => 'datetime',
     ];
 
-    // Связи
     public function user()
     {
         return $this->belongsTo(User::class);

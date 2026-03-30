@@ -6,14 +6,12 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Cart;
 use App\Models\Loyalty;
-use App\Models\LoyaltyHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-
     public function index()
     {
         $orders = Auth::user()->orders()
@@ -27,7 +25,7 @@ class OrderController extends Controller
     public function checkout()
     {
         $cartItems = Auth::user()->cart()->with('product')->get();
-        
+
         if ($cartItems->isEmpty()) {
             return redirect()->route('cart.index')->with('error', 'Корзина пуста');
         }
@@ -52,12 +50,18 @@ class OrderController extends Controller
         $cartItems = $user->cart()->with('product')->get();
 
         if ($cartItems->isEmpty()) {
-            return back()->with('error', 'Корзина пуста');
+            return response()->json([
+                'success' => false,
+                'message' => 'Корзина пуста'
+            ], 400);
         }
 
         foreach ($cartItems as $item) {
             if (!$item->product->hasEnoughStock($item->quantity)) {
-                return back()->with('error', "Товар {$item->product->name} недоступен в нужном количестве");
+                return response()->json([
+                    'success' => false,
+                    'message' => "Товар {$item->product->name} недоступен в нужном количестве"
+                ], 400);
             }
         }
 
@@ -68,7 +72,6 @@ class OrderController extends Controller
             $bonusDiscount = session('bonus_discount', 0);
             $bonusUsed = session('bonus_used', 0);
             $finalAmount = $totalAmount - $bonusDiscount;
-
 
             $order = Order::create([
                 'user_id' => $user->id,
@@ -102,23 +105,23 @@ class OrderController extends Controller
                 }
             }
 
-            $earnedBonus = floor($finalAmount * 0.05);
-            if ($earnedBonus > 0) {
-                $loyalty = $user->loyalty ?? Loyalty::create(['user_id' => $user->id]);
-                $loyalty->addPoints($earnedBonus, 'Начисление за заказ #' . $order->order_number, $order);
-            }
-
             $user->clearCart();
             session()->forget(['bonus_discount', 'bonus_used']);
 
             DB::commit();
 
-            return redirect()->route('orders.show', $order->id)
-                ->with('success', 'Заказ успешно оформлен');
-
+            return response()->json([
+                'success' => true,
+                'message' => 'Заказ успешно оформлен',
+                'order_id' => $order->id,
+                'order_number' => $order->order_number
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Ошибка при оформлении заказа: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при оформлении заказа: ' . $e->getMessage()
+            ], 500);
         }
     }
 
@@ -135,7 +138,7 @@ class OrderController extends Controller
     {
         $order = Order::where('user_id', Auth::id())->findOrFail($id);
 
-        if (!$order->isCancellable()) {
+        if (!in_array($order->status, ['новый', 'в обработке'])) {
             return back()->with('error', 'Этот заказ нельзя отменить');
         }
 
@@ -159,7 +162,6 @@ class OrderController extends Controller
             DB::commit();
 
             return back()->with('success', 'Заказ отменен');
-
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Ошибка при отмене заказа');
@@ -201,5 +203,30 @@ class OrderController extends Controller
         $order->save();
 
         return back()->with('success', 'Заказ оплачен');
+    }
+
+    public function processOrder($id)
+    {
+        $order = Order::findOrFail($id);
+
+        if ($order->user_id !== Auth::id()) {
+            return response()->json(['success' => false, 'message' => 'Доступ запрещен'], 403);
+        }
+
+        if ($order->status === 'новый') {
+            $order->status = 'выполнен';
+            $order->payment_status = 'оплачен';
+            $order->save();
+
+            $earnedBonus = floor($order->final_amount * 0.1);
+
+            if ($earnedBonus > 0) {
+                $user = $order->user;
+                $loyalty = $user->loyalty ?? Loyalty::create(['user_id' => $user->id]);
+                $loyalty->addPoints($earnedBonus, 'Начисление 10% за заказ #' . $order->order_number, $order);
+            }
+        }
+
+        return response()->json(['success' => true]);
     }
 }

@@ -20,7 +20,6 @@ class RegisterController extends Controller
 
     public function store(Request $request)
     {
-        // Валидация
         $request->validate([
             'surname' => 'required|string|max:255',
             'name' => 'required|string|max:255',
@@ -31,7 +30,6 @@ class RegisterController extends Controller
             'birth_date' => 'required|date|before:today',
         ]);
 
-        // Проверка возраста (18+)
         $birthDate = \Carbon\Carbon::parse($request->birth_date);
         $age = $birthDate->age;
         
@@ -41,7 +39,6 @@ class RegisterController extends Controller
             ])->withInput();
         }
 
-        // Создание пользователя
         $user = User::create([
             'surname' => $request->surname,
             'name' => $request->name,
@@ -53,13 +50,11 @@ class RegisterController extends Controller
             'is_verified' => true,
         ]);
 
-        // Запись о проверке возраста
         AgeVerification::create([
             'user_id' => $user->id,
             'verified_at' => now(),
         ]);
 
-        // Бонусный счет
         Loyalty::create([
             'user_id' => $user->id,
             'points' => 100,
@@ -67,10 +62,8 @@ class RegisterController extends Controller
             'level' => 'бронза',
         ]);
 
-        // Автоматический вход
         Auth::login($user);
 
-        // Перенаправление
         return redirect()->route('home')->with('success', 'Регистрация успешна!');
     }
 }

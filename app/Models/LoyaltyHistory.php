@@ -19,7 +19,6 @@ class LoyaltyHistory extends Model
         'description',
     ];
 
-    // Связи
     public function user()
     {
         return $this->belongsTo(User::class);

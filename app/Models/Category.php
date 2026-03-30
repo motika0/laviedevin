@@ -15,7 +15,6 @@ class Category extends Model
         'parent_id',
     ];
 
-    // ============ СВЯЗИ ============
     public function products()
     {
         return $this->hasMany(Product::class);

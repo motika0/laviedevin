@@ -33,7 +33,6 @@ class User extends Authenticatable
         'is_verified' => 'boolean',
     ];
 
-
     public function cart()
     {
         return $this->hasMany(Cart::class);
@@ -44,15 +43,16 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
-public function favorites()
-{
-    return $this->hasMany(Favorite::class, 'user_id');
-}
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class, 'user_id');
+    }
 
-public function reviews()
-{
-    return $this->hasMany(Review::class, 'user_id');
-}
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'user_id');
+    }
+    
     public function loyalty()
     {
         return $this->hasOne(Loyalty::class);
@@ -63,19 +63,15 @@ public function reviews()
         return $this->hasMany(LoyaltyHistory::class);
     }
 
-public function ageVerification()
-{
-    return $this->hasOne(AgeVerification::class, 'user_id');
-}
-
-
-
+    public function ageVerification()
+    {
+        return $this->hasOne(AgeVerification::class, 'user_id');
+    }
 
     public function getFullName(): string
     {
         return trim($this->surname . ' ' . $this->name . ' ' . $this->patronymic);
     }
-
 
     public function getInitials(): string
     {
@@ -87,24 +83,20 @@ public function ageVerification()
         return $initials;
     }
 
-
     public function isAdult(): bool
     {
-        return $this->birth_date->age >= 18;
+        return $this->birth_date && $this->birth_date->age >= 18;
     }
-
 
     public function getBonusPoints(): int
     {
         return $this->loyalty ? $this->loyalty->points : 0;
     }
 
- 
     public function getLoyaltyLevel(): string
     {
         return $this->loyalty ? $this->loyalty->level : 'бронза';
     }
-
 
     public function getTotalSpent(): float
     {
@@ -113,40 +105,37 @@ public function ageVerification()
             ->sum('final_amount');
     }
 
-
     public function getOrdersCount(): int
     {
         return $this->orders()->count();
     }
 
- 
     public function getCartItems()
     {
         return $this->cart()->with('product')->get();
     }
 
-
     public function getCartTotal(): float
     {
         return $this->cart()
-            ->join('products', 'cart.product_id', '=', 'products.id')
-            ->sum('products.price * cart.quantity');
+            ->with('product')
+            ->get()
+            ->sum(function ($item) {
+                return $item->product->getCurrentPrice() * $item->quantity;
+            });
     }
 
-  
     public function getFavorites()
     {
         return $this->favorites()->with('product')->get();
     }
 
- 
     public function hasInFavorites(int $productId): bool
     {
         return $this->favorites()
             ->where('product_id', $productId)
             ->exists();
     }
-
 
     public function hasInCart(int $productId): bool
     {
@@ -155,7 +144,6 @@ public function ageVerification()
             ->exists();
     }
 
- 
     public function clearCart(): void
     {
         $this->cart()->delete();
